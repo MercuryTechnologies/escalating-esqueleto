@@ -4,6 +4,7 @@ import Data.Text (Text)
 import Database.Esqueleto.Experimental
 import Schema
 import Types
+import Data.Time.Calendar (Day, showGregorian)
 
 {-
 Congratulations on becoming the new proprietor of the local Stonecold's ice
@@ -17,18 +18,20 @@ The equivalent SQL would be:
 SELECT * FROM flavors;
 -}
 allFlavors :: DB [Entity Flavor]
-allFlavors = do
-  _
+allFlavors =
+  select . from $ table @Flavor
 
 {-
 Actually I just want the flavor name values. That would be:
 SELECT flavors.name FROM flavors;
 
-Ensure you do this flavor->name projection in SQL, not after the fact in Haskell.
+Ensure you do this flavor->name projection in Haskell, not after the fact in SQL.
 -}
 allFlavorNameValues :: DB [Value Text]
-allFlavorNameValues = do
-  _
+allFlavorNameValues =
+  select $ do
+    flavors <- from $ table @Flavor
+    pure $ flavors ^. FlavorName
 
 {-
 Both queries above return lists of wrapped types. 'Entity' comes from persistent,
@@ -36,18 +39,27 @@ and can be unwrapped into its components via 'entityKey' and 'entityVal'.
 
 'Value' comes from esqueleto. Can you remove the 'Value' wrapper to return a
 plain '[Text]'? Start by copying the previous query.
+
+-- I feel like if someone didn't know about 'unValue' that they may have a hard
+-- time finding it
 -}
 allFlavorNames :: DB [Text]
 allFlavorNames = do
-  _
+  flavorNames <- select $ do
+    flavors <- from $ table @Flavor
+    pure $ flavors ^. FlavorName
+  pure $ map unValue flavorNames
 
 {-
 Let's introduce WHERE clauses.
 A vegan just walked in. Provide all our dairy-free flavors.
 -}
 dairyFreeFlavors :: DB [Entity Flavor]
-dairyFreeFlavors = do
-  _
+dairyFreeFlavors =
+  select $ do
+    flavors <- from $ table @Flavor
+    where_ (flavors ^. FlavorDairyFree ==. val True)
+    pure flavors
 
 {-
 We'd like to run a mildly nefarious targeted ad campaign. What are the emails
@@ -56,9 +68,14 @@ provided a favorite flavor?
 
 Fill in the type as well.
 -}
-customersWithoutBirthdaysWithFlavors :: _
+customersWithoutBirthdaysWithFlavors :: DB [Email]
 customersWithoutBirthdaysWithFlavors = do
-  _
+  emailVals <- select $ do
+    customers <- from $ table @Customer
+    where_ $ (isNothing $ customers ^. CustomerBirthday)
+      &&. (not_ . isNothing $ customers ^. CustomerFavoriteFlavor)
+    pure $ customers ^. CustomerEmail
+  pure $ map unValue emailVals
 
 {-
 Our founder's birthday is April 17th, and we're running a special.
@@ -72,4 +89,10 @@ If you need a hint, see hints/EE01_customersSharingFoundersBirthday.md
 -}
 customersSharingFoundersBirthday :: DB [Entity Customer]
 customersSharingFoundersBirthday = do
-  _
+  let founderBday = "04-17"
+      compareBdays :: Day -> Bool
+      compareBdays = (==) founderBday . drop 5 . showGregorian
+  select $ do
+    customers <- from $ table @Customer
+    --where_
+    pure customers
