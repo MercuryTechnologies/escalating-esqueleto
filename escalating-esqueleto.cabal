@@ -8,26 +8,26 @@ author:             Mitchell Vitez
 maintainer:         mitchell@vitez.me
 
 common common-options
-  ghc-options: -Wall -fdefer-typed-holes
+  ghc-options: -Wall -fdefer-typed-holes -fdiagnostics-color=always
   build-depends: base
-               , bytestring ^>=0.11
-               , aeson ^>=2.1
-               , esqueleto ^>=3.5
-               , monad-logger ^>=0.3
-               , mtl ^>=2.3
+               , bytestring ^>= 0.12
+               , aeson ^>= 2.2
+               , esqueleto ^>= 3.5
+               , monad-logger ^>= 0.3
+               , mtl ^>= 2.3
                , path-pieces ^>=0.2
                , pcre-heavy ^>=1.0
                , persistent ^>=2.14
                , persistent-postgresql ^>=2.13
                , string-conversions ^>=0.4
-               , template-haskell ^>=2.20
-               , text ^>=2.0
-               , time ^>=1.12
-               , uuid ^>=1.3
+               , template-haskell ^>= 2.22
+               , text ^>= 2.1
+               , time ^>= 1.12
+               , uuid ^>= 1.3
 
 library escalating-esqueleto-lib
   import: common-options
-  ghc-options: -Wall -Werror -fdefer-typed-holes
+  ghc-options: -Wall -fdefer-typed-holes
   default-language: Haskell2010
   hs-source-dirs: lib
   exposed-modules: Schema
@@ -53,7 +53,7 @@ library escalating-esqueleto-exercises
 library escalating-esqueleto-answers
   import: common-options
   default-language: Haskell2010
-  ghc-options: -Wall -Werror -fdefer-typed-holes
+  ghc-options: -Wall -fdefer-typed-holes
   hs-source-dirs: answers
   exposed-modules: Answers
   build-depends: escalating-esqueleto-lib

@@ -10,10 +10,11 @@ import Answers qualified as Answer
 import Types
 
 import Test.Hspec
+import Test.Hspec.Runner
 
 main :: IO ()
-main = hspec $ do
-  describe "EE0_StartingOut" $ do
+main = hspecWith defaultConfig { configColorMode = ColorAlways } $ do
+  fdescribe "EE0_StartingOut" $ do
     it "a_iWantToLearnEsqueleto" $ do
       Exercise.a_iWantToLearnEsqueleto `shouldBe` Answer.a_iWantToLearnEsqueleto
 

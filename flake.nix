@@ -31,9 +31,18 @@
               pkgs.pcre
               (pkgs.haskell-language-server.override { supportedGhcVersions = [ "96" ]; })
               pkgs.postgresql
-              pkgs.fswatch
+              (pkgs.ghciwatch.overrideAttrs (oldAttrs: rec {
+                patches = oldAttrs.patches or [ ] ++ [
+                  (pkgs.fetchpatch {
+                    url = "https://github.com/MercuryTechnologies/ghciwatch/commit/adb82ea1c7f8d7ce16b17f5f0fe530d5e832c300.patch";
+                    hash = "sha256-gbYr46nWLApKDCyGvv73fAIglc7qA3ydSXcgBpJIGWY=";
+                  })
+                ];
+              }))
             ];
             shellHook = ''
+              export HSPEC_COLOR=always
+              export GHC_COLORS="always"
               export PGDATA=$PWD/.postgres
               export PGPORT=5432
               export PGHOST=/tmp

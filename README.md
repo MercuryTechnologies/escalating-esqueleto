@@ -30,9 +30,10 @@ make db-reset
 The first exercise file is `exercises/EE0_StartingOut.hs`
 
 1. Run `nix develop` to enter a nix shell
-2. Edit `test/Main.hs` to focus on the relevant tests (see below)
-3. Fix up the exercise file by filling in any typed holes or missing pieces
-4. In the nix shell, run `make test` to check your work
+2. In the nix shell, run `make ghciwatch` to start the feedback loop
+3. Edit `test/Main.hs` to focus on the relevant tests (see below)
+4. Fix up the exercise file by filling in any typed holes or missing pieces
+5. Save the file; `ghciwatch` will automatically reload and rerun the relevant tests
 
 Then, move on to the next exercise file in `exercises/`
 

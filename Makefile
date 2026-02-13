@@ -1,3 +1,5 @@
+MAKEFLAGS += -s
+
 # check your exercises
 test:
 	cabal test
@@ -16,11 +18,18 @@ db-reset:
 psql:
 	psql -d escalatingesqueleto
 
-# simple filewatcher that reruns `cabal test` on changes
-watch:
-	fswatch -o exercises/* test/* | (while read -r event; do cabal test; done)
 
-	# you could instead use a more advanced watcher like `ghciwatch`
-	# ghciwatch --watch exercises --watch test --enable-eval --clear --test-ghci Main.main
+# close feedback loop with ghciwatch
+ghciwatch:
+	ghciwatch \
+		--watch exercises \
+		--watch lib \
+		--watch answers \
+		--watch test \
+		--enable-eval \
+		--clear \
+		--error-file ghcid.txt \
+		--test-ghci Main.main \
+		--command "cabal repl escalating-esqueleto-test"
 
-.PHONY: test watch
+.PHONY: test ghciwatch
